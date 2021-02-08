@@ -5,37 +5,44 @@ import yfinance as yf
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
 
 # sns.set_style('darkgrid')
 sns.set_theme(style='darkgrid', font_scale=1.5)
 
 # define the ticker symbol
 tickerSymbol = 'MSFT'
+demoData = 'someData.pkl'
+
 
 # get data on this ticker
 tickerData = yf.Ticker(tickerSymbol)
 
 # get the historical prices for this ticker
-# tickerDf = tickerData.history(period='1d', start='2010-1-1', end='2020-1-25')
-# tickerDf.to_pickle( 'someData.pkl')
-tickerDf = pd.read_pickle( 'someData.pkl')
+if os.path.exists(demoData):
+    tickerDf = pd.read_pickle(demoData)
+else:
+    tickerDf = tickerData.history(
+        period='1d', start='2010-1-1', end='2020-1-25')
+    tickerDf.to_pickle('someData.pkl')
+
+# make Data a value you can work with
+tickerDf.reset_index('Date', inplace=True)
+# print(tickerDf.columns)
+print(tickerDf.info())
 
 
-# see your data
-#tickerDf
+# # make a nice little figure
+# sns.lineplot(x='Date', y='Close', data=tickerDf)
+# plt.title(tickerSymbol)
 
-# make a nice little figure
-#print(tickerDf.columns)
-#sns.lineplot(x='Date', y='Close', data=tickerDf)
-#plt.title(tickerSymbol)
+# -------------------------
+
+df = tickerDf.groupby([pd.Grouper(key='Date', freq='W-MON')]
+                      )  # weekly, mondays
+
+print(f"Len of original DF: {len(tickerDf)}")
+print(f"Len of groupby DF with some opration DF: {len(df.sum())}")
 
 
-# ---------
-# info on the company
-#tickerData.info
-#
-# get event data for ticker
-#tickerData.calendar
-#
-## get recommendation data for ticker
-#tickerData.recommendations
+# tickerDf['growthSlope'] = tickerDf['Close'] - tickerDf['Open']
