@@ -15,10 +15,3 @@ class Ticker2(yf.Ticker):
             tickerDf = super().history(*args, **kwargs)
             tickerDf.to_pickle(self.savePath)
         return tickerDf
-
-        # define the ticker symbol
-
-        # # get data on this ticker
-        # tickerData = yf.Ticker(self.tickerSymbol)
-
-        # # get the historical prices for this ticker
