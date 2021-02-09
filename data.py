@@ -8,20 +8,17 @@ class Ticker2(yf.Ticker):
         super().__init__(ticker)
         self.savePath = savePath
 
-    def history(self):
-        return super().history(
-            period='1d', start='2010-1-1', end='2020-1-25')
-
-        # define the ticker symbol
-
-        # get data on this ticker
-        tickerData = yf.Ticker(self.tickerSymbol)
-
-        # get the historical prices for this ticker
+    def history(self, *args, **kwargs):
         if os.path.exists(self.savePath):
             tickerDf = pd.read_pickle(self.savePath)
         else:
-            tickerDf = tickerData.history(
-                period='1d', start='2010-1-1', end='2020-1-25')
+            tickerDf = super().history(*args, **kwargs)
             tickerDf.to_pickle(self.savePath)
         return tickerDf
+
+        # define the ticker symbol
+
+        # # get data on this ticker
+        # tickerData = yf.Ticker(self.tickerSymbol)
+
+        # # get the historical prices for this ticker

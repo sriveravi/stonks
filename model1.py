@@ -14,7 +14,7 @@ sns.set_theme(style='darkgrid', font_scale=1.5)
 tickerSymbol = 'MSFT'
 
 tickerData = Ticker2(tickerSymbol)
-tickerDf = tickerData.history()
+tickerDf = tickerData.history(period='1d', start='2010-1-1', end='2020-1-25')
 
 # make Data a value you can work with
 tickerDf.reset_index('Date', inplace=True)
