@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from data import Ticker2
@@ -25,18 +26,40 @@ print(tickerDf.info())
 
 # -----
 # rolling average
-
-avgIntDays = 20
-tickerDf['Close_Avg'] = tickerDf.rolling(
+avgIntDays = 7
+tickerDf['CloseAvg'] = tickerDf.rolling(
     f"{avgIntDays}D", on='Date')['Close'].mean()
 
-
-# sns.lineplot(x='Date', y='Close', data=tickerDf)
-# sns.lineplot(x='Date', y='Close_Avg', data=tickerDf)
-
+# show it
 sns.lineplot(x='Date', y='value', hue='variable',
-             data=pd.melt(tickerDf, id_vars=['Date'], value_vars=['Close', 'Close_Avg']))
+             data=pd.melt(tickerDf, id_vars=['Date'], value_vars=['Close', 'CloseAvg']))
 plt.title(tickerSymbol)
+
+# -------------------------
+# Time delay of moving average closing
+delay = -14  # days
+tickerDf['CloseAvgDelayed'] = tickerDf['CloseAvg'].shift(
+    periods=delay, fill_value=np.nan)
+tickerDf['CloseFutureChange'] = tickerDf['CloseAvgDelayed'] - tickerDf['Close']
+
+# If the average is up at the delay, then good (else bad)
+tickerDf['Good'] = 0  # preset all bad
+tickerDf.loc[tickerDf['CloseFutureChange'] > 0, 'Good'] = 1
+
+
+plt.figure(figsize=(6, 8))
+plt.subplot(3, 1, 3)
+plt.plot(tickerDf['Date'], tickerDf['Good'], '.')
+plt.subplot(3, 1, 2)
+plt.plot(tickerDf['Date'], tickerDf['CloseFutureChange'], '.')
+plt.subplot(3, 1, 1)
+plt.plot(tickerDf['Date'], tickerDf['Close'], '-')
+
+# tickerDf
+# tickerDf.dropna(inplace=True)
+
+
+# tickerDf['CloseAvg'].shift(periods=3, fill_value=np.nan)
 
 # -------------------------
 
