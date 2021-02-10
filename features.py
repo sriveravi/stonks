@@ -24,20 +24,54 @@ print(tickerDf.info())
 # sns.lineplot(x='Date', y='Close', data=tickerDf)
 # plt.title(tickerSymbol)
 
+tickerDf.columns
+tickerDf.head()
 
 # -----
-# rolling average
-avgIntDays = 7
-tickerDf['CloseAvg'] = tickerDf.rolling(
-    f"{avgIntDays}D", on='Date')['Close'].mean()
+# features parameters
+closingRollAvgInterval_D = 7
+dailyChangeRollAvgInterval_D = 7
+
+
+# --------
+# daily change features
+#   rolling average, rolling std.
+tickerDf['DailyChange'] = tickerDf['Close'] - tickerDf['Open']
+tickerDf['DailyChangeMean'] = tickerDf.rolling(
+    f"{dailyChangeRollAvgInterval_D}D", on='Date')['DailyChange'].mean()
+tickerDf['DailyChangeStd'] = tickerDf.rolling(
+    f"{dailyChangeRollAvgInterval_D}D", on='Date')['DailyChange'].std()
 
 # show it
+plt.figure(figsize=(6, 8))
+plt.subplot(2, 1, 1)
+# sns.barplot(x='Date', y='DailyChangeMean', data=tickerDf)
+ax = sns.scatterplot(x='Date', y='DailyChangeMean', data=tickerDf)
+ax.axhline(0, linestyle='-', color='red')
+ax.set_xticklabels([])
+ax.set_xlabel('')
+ax.set_ylabel(f'[C-O] Mean (Roll {dailyChangeRollAvgInterval_D} D)')
+
+plt.subplot(2, 1, 2)
+ax = sns.scatterplot(x='Date', y='DailyChangeStd', data=tickerDf)
+ax.set_ylabel(f'[C-O] STD (Roll {dailyChangeRollAvgInterval_D} D)')
+
+# ------
+# closing mean features ( for estimating good/bad at a delay)
+#   rolling average closing mean
+tickerDf['CloseAvg'] = tickerDf.rolling(
+    f"{closingRollAvgInterval_D}D", on='Date')['Close'].mean()
+
+# show closing average rolling mean
+plt.figure()
 sns.lineplot(x='Date', y='value', hue='variable',
              data=pd.melt(tickerDf, id_vars=['Date'], value_vars=['Close', 'CloseAvg']))
 plt.title(tickerSymbol)
 
 # -------------------------
 # Time delay of moving average closing
+#   For identifying good/bad
+
 delay = -14  # days
 tickerDf['CloseAvgDelayed'] = tickerDf['CloseAvg'].shift(
     periods=delay, fill_value=np.nan)
