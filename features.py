@@ -56,6 +56,7 @@ plt.subplot(2, 1, 2)
 ax = sns.scatterplot(x='Date', y='DailyChangeStd', data=tickerDf)
 ax.set_ylabel(f'[C-O] STD (Roll {dailyChangeRollAvgInterval_D} D)')
 
+
 # ------
 # closing mean features ( for estimating good/bad at a delay)
 #   rolling average closing mean
@@ -108,19 +109,27 @@ plt.suptitle(tickerSymbol)
 # tickerDf.dropna(inplace=True)
 
 
-# tickerDf['CloseAvg'].shift(periods=3, fill_value=np.nan)
-
 # -------------------------
+# show some relationships between variables of interest
 
-df = tickerDf.groupby([pd.Grouper(key='Date', freq='W-MON')]
-                      )  # weekly, mondays
+# print(tickerDf.columns)
 
-print(f"Len of original DF: {len(tickerDf)}")
-print(f"Len of groupby DF with some opration DF: {len(df.sum())}")
+colsOfInterest = ['Volume', 'DailyChange', 'DailyChangeMean',
+                  'DailyChangeStd', 'CloseFutureChange', 'Good']
 
-
-iterator = iter(df)
-idx, subdf = next(iterator)
+sns.pairplot(tickerDf[colsOfInterest])
+# ---------------------------
 
 
-subdf
+# df = tickerDf.groupby([pd.Grouper(key='Date', freq='W-MON')]
+#                       )  # weekly, mondays
+
+# print(f"Len of original DF: {len(tickerDf)}")
+# print(f"Len of groupby DF with some opration DF: {len(df.sum())}")
+
+
+# iterator = iter(df)
+# idx, subdf = next(iterator)
+
+
+# subdf
