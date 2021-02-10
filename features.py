@@ -3,8 +3,9 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from data import Ticker2
+import os
 
-
+figDir = 'Figs'
 sns.set_theme(style='darkgrid', font_scale=1.5)
 
 
@@ -48,13 +49,27 @@ tickerDf.loc[tickerDf['CloseFutureChange'] > 0, 'Good'] = 1
 
 
 plt.figure(figsize=(6, 8))
-plt.subplot(3, 1, 3)
-plt.plot(tickerDf['Date'], tickerDf['Good'], '.')
-plt.subplot(3, 1, 2)
-plt.plot(tickerDf['Date'], tickerDf['CloseFutureChange'], '.')
 plt.subplot(3, 1, 1)
-plt.plot(tickerDf['Date'], tickerDf['Close'], '-')
+# plt.plot(tickerDf['Date'], tickerDf['Close'], '-')
+ax = sns.lineplot(x='Date', y='Close', data=tickerDf)
+ax.set_xticklabels([])
+ax.set_xlabel('')
 
+plt.subplot(3, 1, 2)
+# plt.plot(tickerDf['Date'], tickerDf['CloseFutureChange'], '.')
+ax = sns.scatterplot(x='Date', y='CloseFutureChange', data=tickerDf)
+ax.axhline(0, linestyle='-', color='red')
+ax.set_xticklabels([])
+ax.set_xlabel('')
+plt.ylabel(f'{-1*delay} day change')
+
+plt.subplot(3, 1, 3)
+# plt.plot(tickerDf['Date'], tickerDf['Good'], '.')
+# ax = sns.scatterplot(x='Date', y='Good', data=tickerDf, markers='+')
+kwargs = {"alpha": 1.0, "s": 2}  # "color": "darkred",
+ax = sns.scatterplot(x='Date', y='Good', data=tickerDf, **kwargs)
+plt.yticks([0, 1], ["No", "Yes"])
+plt.suptitle(tickerSymbol)
 # tickerDf
 # tickerDf.dropna(inplace=True)
 
