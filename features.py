@@ -118,7 +118,14 @@ colsOfInterest = ['Volume', 'DailyChange', 'DailyChangeMean',
                   'DailyChangeStd', 'CloseFutureChange', 'Good']
 
 sns.pairplot(tickerDf[colsOfInterest])
+
 # ---------------------------
+# Visualize the good and bad by 2 features
+plt.figure()
+
+sns.scatterplot(x='DailyChangeMean', y='DailyChangeStd',
+                hue='Good', data=tickerDf)
+plt.title(tickerSymbol)
 
 
 # df = tickerDf.groupby([pd.Grouper(key='Date', freq='W-MON')]
