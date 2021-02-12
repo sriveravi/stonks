@@ -24,14 +24,18 @@ tickerDf
 print(tickerDf.columns)
 sns.lineplot(x='Date', y='Close', data=tickerDf)
 plt.title(tickerSymbol)
+plt.ion()
+plt.show()
+plt.pause(1)
+plt.close()
 
 
 # ---------
 # info on the company
-tickerData.info
+print(tickerData.info)
 
 # get event data for ticker
-tickerData.calendar
+print(tickerData.calendar)
 
 # get recommendation data for ticker
-tickerData.recommendations
+print(tickerData.recommendations)
