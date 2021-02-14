@@ -2,7 +2,7 @@
 import numpy as np
 import pymc3 as pm
 from features import tickerDf_updated as data
-
+from modelHelper import plot_traces
 
 Y_obs = data['Good'].values
 X = data[['DailyChangeMean', 'DailyChangeStd']].values
@@ -12,13 +12,26 @@ with pm.Model() as model:
     alpha = pm.Normal("alpha", mu=0, sigma=10)
     beta = pm.Normal("beta", mu=0, sigma=10, shape=num_covariates)
 
-    p = 1 / (
-        1 + np.exp(alpha + pm.math.dot(X, beta))  # beta[0] * X1 + beta[1] * X2
-    )
+    p = pm.math.invlogit(alpha + pm.math.dot(X, beta))
+    # p = pm.Deterministic('p', pm.math.invlogit(alpha + pm.math.dot(X, beta)))
 
     # n is number Bernoulli trials
     Y = pm.Binomial('Y', n=1, p=p, observed=Y_obs)
 
+with model:
+    trace = pm.sample(
+        1000, tune=1000, return_inferencedata=False, cores=1)
+
+# show error and such
+pm.traceplot(trace)
+# plot_traces(trace, model)
+
+# show means for all parameters
+# pm.plot_posterior(trace)
+
+
+meanEstimates = {var: trace[var].mean(axis=0) for var in trace.varnames}
+print(meanEstimates)
 
 # with Model() as model:  # model specifications in PyMC3 are wrapped in a with-statement
 #     # Define priors

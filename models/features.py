@@ -50,7 +50,8 @@ tickerDf['CloseFutureChange'] = tickerDf['CloseAvgDelayed'] - tickerDf['Close']
 tickerDf['Good'] = 0  # preset all bad
 tickerDf.loc[tickerDf['CloseFutureChange'] > 0, 'Good'] = 1
 
-
+# clean for return
+tickerDf.dropna(inplace=True)
 tickerDf_updated = tickerDf
 
 # df = tickerDf.groupby([pd.Grouper(key='Date', freq='W-MON')]
