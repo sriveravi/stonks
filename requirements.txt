@@ -1,6 +1,8 @@
 pymc3
+arviz
 pandas
 seaborn
 numpy
 matplotlib
 yfinance
+
