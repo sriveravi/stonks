@@ -13,7 +13,7 @@ Passing in the exchange:
 
 Using environment variables:
 ```sh
-export exchange=nyse && ./getSymbols.sh -e=nyse
+export exchange=nyse && ./getSymbols.sh
 ```
 
 ## Returned
