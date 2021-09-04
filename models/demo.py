@@ -1,6 +1,11 @@
 # Notes: basic yfinance demo mostly taken from:
 # https://towardsdatascience.com/how-to-get-stock-data-using-python-c0de1df17e75
 
+import matplotlib
+matplotlib.use('Agg')
+
+
+
 import yfinance as yf
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -15,7 +20,7 @@ tickerSymbol = 'MSFT'
 tickerData = yf.Ticker(tickerSymbol)
 
 # get the historical prices for this ticker
-tickerDf = tickerData.history(period='1d', start='2010-1-1', end='2020-1-25')
+tickerDf = tickerData.history(period='1d', start='2021-1-1', end='2021-6-25')
 
 # see your data
 tickerDf
