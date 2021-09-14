@@ -5,54 +5,57 @@ import matplotlib.pyplot as plt
 import os
 from data import Ticker2
 
+
+
+def addFeatures( tickerDF,closingRollAvgInterval_D = 7, 
+			     dailyChangeRollAvgInterval_D = 7, delay = -14):  # days):
+	'''
+	delay in days, negative value 
+	'''
+	# make Data a value you can work with
+	tickerDf.reset_index('Date', inplace=True)
+	
+	# --------
+	# daily change features
+	#   rolling average, rolling std.
+	tickerDf['DailyChange'] = tickerDf['Close'] - tickerDf['Open']
+	tickerDf['DailyChangeMean'] = tickerDf.rolling(
+	    f"{dailyChangeRollAvgInterval_D}D", on='Date')['DailyChange'].mean()
+	tickerDf['DailyChangeStd'] = tickerDf.rolling(
+	    f"{dailyChangeRollAvgInterval_D}D", on='Date')['DailyChange'].std()
+	
+	
+	# ------
+	# closing mean features ( for estimating good/bad at a delay)
+	#   rolling average closing mean
+	tickerDf['CloseAvg'] = tickerDf.rolling(
+	    f"{closingRollAvgInterval_D}D", on='Date')['Close'].mean()
+	
+	
+	# -------------------------
+	# Time delay of moving average closing
+	#   For identifying good/bad
+	
+	
+	tickerDf['CloseAvgDelayed'] = tickerDf['CloseAvg'].shift(
+	    periods=delay, fill_value=np.nan)
+	tickerDf['CloseFutureChange'] = tickerDf['CloseAvgDelayed'] - tickerDf['Close']
+	
+	# If the average is up at the delay, then good (else bad)
+	tickerDf['Good'] = 0  # preset all bad
+	tickerDf.loc[tickerDf['CloseFutureChange'] > 0, 'Good'] = 1
+	
+	# clean for return
+	tickerDf.dropna(inplace=True)
+	# tickerDf_updated = tickerDf
+	return tickerDf
+
+
 tickerSymbol = 'MSFT'
 tickerData = Ticker2(tickerSymbol)
 tickerDf = tickerData.history(period='1d', start='2010-1-1', end='2020-1-25')
+tickerDf_updated =  addFeatures( tickerDf)
 
-
-# make Data a value you can work with
-tickerDf.reset_index('Date', inplace=True)
-
-
-# -----
-# features parameters
-closingRollAvgInterval_D = 7
-dailyChangeRollAvgInterval_D = 7
-
-
-# --------
-# daily change features
-#   rolling average, rolling std.
-tickerDf['DailyChange'] = tickerDf['Close'] - tickerDf['Open']
-tickerDf['DailyChangeMean'] = tickerDf.rolling(
-    f"{dailyChangeRollAvgInterval_D}D", on='Date')['DailyChange'].mean()
-tickerDf['DailyChangeStd'] = tickerDf.rolling(
-    f"{dailyChangeRollAvgInterval_D}D", on='Date')['DailyChange'].std()
-
-
-# ------
-# closing mean features ( for estimating good/bad at a delay)
-#   rolling average closing mean
-tickerDf['CloseAvg'] = tickerDf.rolling(
-    f"{closingRollAvgInterval_D}D", on='Date')['Close'].mean()
-
-
-# -------------------------
-# Time delay of moving average closing
-#   For identifying good/bad
-
-delay = -14  # days
-tickerDf['CloseAvgDelayed'] = tickerDf['CloseAvg'].shift(
-    periods=delay, fill_value=np.nan)
-tickerDf['CloseFutureChange'] = tickerDf['CloseAvgDelayed'] - tickerDf['Close']
-
-# If the average is up at the delay, then good (else bad)
-tickerDf['Good'] = 0  # preset all bad
-tickerDf.loc[tickerDf['CloseFutureChange'] > 0, 'Good'] = 1
-
-# clean for return
-tickerDf.dropna(inplace=True)
-tickerDf_updated = tickerDf
 
 # df = tickerDf.groupby([pd.Grouper(key='Date', freq='W-MON')]
 #                       )  # weekly, mondays

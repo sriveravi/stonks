@@ -1,8 +1,8 @@
 # Notes: basic yfinance demo mostly taken from:
 # https://towardsdatascience.com/how-to-get-stock-data-using-python-c0de1df17e75
 
-import matplotlib
-matplotlib.use('Agg')
+# import matplotlib
+# matplotlib.use('Agg')
 
 
 
