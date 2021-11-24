@@ -14,7 +14,7 @@
 # Basic setup
 import numpy as np
 import pandas as pd
-get_ipython().run_line_magic('matplotlib', 'inline')
+# get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 # In[3]:
@@ -24,9 +24,6 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 # In[4]:
-
-
-ls
 
 
 # ## A few reminder examples of plotting and running a script
@@ -146,21 +143,6 @@ def addFeatures( tickerDf, closingRollAvgInterval_D = 7,
 # tDF.reset_index(inplace=True)
 
 
-# In[12]:
-
-
-
-# tDF
-
-
-# In[ ]:
-
-
-
-
-
-# In[13]:
-
 
 def getSymbolDF( symbols):
     ticker_df_list = []
@@ -175,8 +157,6 @@ def getSymbolDF( symbols):
     return df
 
 
-# In[14]:
-
 
 trainDF = getSymbolDF( symbols_train )
 valDF = getSymbolDF( symbols_val )
@@ -184,8 +164,6 @@ valDF = getSymbolDF( symbols_val )
 trainDF.to_pickle( 'train.pkl')
 valDF.to_pickle( 'val.pkl')
 
-
-# In[15]:
 
 
 trainDF
