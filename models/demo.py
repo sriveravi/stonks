@@ -5,10 +5,15 @@
 # matplotlib.use('Agg')
 
 
-
 import yfinance as yf
 import seaborn as sns
 import matplotlib.pyplot as plt
+
+
+import os
+
+outputDir = 'Figs_Demo'
+os.makedirs(outputDir, exist_ok=True)
 
 # sns.set_style('darkgrid')
 sns.set_theme(style='darkgrid', font_scale=1.5)
@@ -23,12 +28,16 @@ tickerData = yf.Ticker(tickerSymbol)
 tickerDf = tickerData.history(period='1d', start='2021-1-1', end='2021-6-25')
 
 # see your data
-tickerDf
+print(tickerDf)
+print(tickerDf.columns)
+
 
 # make a nice little figure
-print(tickerDf.columns)
-sns.lineplot(x='Date', y='Close', data=tickerDf)
+plt.figure()
+ax = sns.lineplot(x='Date', y='Close', data=tickerDf, )
+ax.tick_params(axis='x', rotation=90)
 plt.title(tickerSymbol)
+plt.savefig( os.path.join( outputDir, f'{tickerSymbol}_history.png'), bbox_inches='tight')
 plt.ion()
 plt.show()
 plt.pause(1)
