@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import yfinance as yf
+from yfinance import ticker
 
 
 class TickerCached(yf.Ticker):
@@ -21,10 +22,13 @@ class TickerCached(yf.Ticker):
 
 
 
+if __name__ == '__main__':
+    
+    # get data on this ticker
+    tickerSymbol = 'MSFT'
+    tickerData = TickerCached(tickerSymbol)
 
-# get data on this ticker
-tickerSymbol = 'MSFT'
-tickerData = TickerCached(tickerSymbol)
+    # get the historical prices for this ticker
+    tickerDf = tickerData.history(period='1d', start='2021-1-1', end='2021-6-25')
 
-# get the historical prices for this ticker
-tickerDf = tickerData.history(period='1d', start='2021-1-1', end='2021-6-25')
+    tickerData.get_info()

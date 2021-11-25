@@ -1,55 +1,19 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+from data import TickerCached as Ticker
+from sklearn.linear_model import LogisticRegression
+# Basic setup
+import numpy as np
+import pandas as pd
 
 
 # %pip list
 #!jupyter nbconvert --to script lr_test.ipynb
-
-
-# In[2]:
-
-
-# Basic setup
-import numpy as np
-import pandas as pd
 # get_ipython().run_line_magic('matplotlib', 'inline')
 
 
-# In[3]:
-
-
-# %pip install yfinance
-
-
-# In[4]:
-
-
-# ## A few reminder examples of plotting and running a script
-
-# In[5]:
-
-
-# %matplotlib inline
-# import numpy as np
-# import matplotlib.pyplot as plt
-
-# t = np.arange(0, 5, 0.2)
-# plt.plot(t, t, 'r--', t, t**2, 'bs', t, t**3, 'g^')
-# plt.show()
-
-
-# In[6]:
-
-
-# %run demo.py
-
-
-# ## Load Nasdaq summary of Symbols
-
-# In[7]:
-
+## Load Nasdaq summary of Symbols
 
 nasdaq = pd.read_csv('nasdaqlisted.txt', delimiter='|')
 print(nasdaq.head())
@@ -57,11 +21,9 @@ print(nasdaq.head())
 
 # ## Decide on training and validation sets
 
-# In[8]:
 
-
-Ntotal = 100
-Ntrain = 70
+Ntotal = 10
+Ntrain = 7
 
 symbols = nasdaq['Symbol'].sample(Ntotal)
 
@@ -78,10 +40,8 @@ print( "Val symbols: ", symbols_val)
 # - concatenate into a large dataframe
 # 
 
-# In[9]:
 
-
-import yfinance as yf
+# import yfinance as yf
 # from features import addFeatures
 
 
@@ -135,19 +95,15 @@ def addFeatures( tickerDf, closingRollAvgInterval_D = 7,
     return tickerDf
 
 
-# In[11]:
-
-
 # ticker = yf.Ticker(symbols_train[0])
 # tDF = ticker.history(period='1d', start='2010-1-1', end='2020-1-25')
 # tDF.reset_index(inplace=True)
 
 
-
 def getSymbolDF( symbols):
     ticker_df_list = []
     for tickerStr in symbols:
-        ticker = yf.Ticker(tickerStr)
+        ticker = Ticker(tickerStr)
         tDF = ticker.history(period='1d', start='2020-1-1', end='2021-8-25')
         #         tDF = ticker.history(period='1d', start='2010-1-1', end='2020-1-25')
         tDF = addFeatures(tDF)
@@ -174,7 +130,7 @@ trainDF
 # In[16]:
 
 
-from sklearn.linear_model import LogisticRegression
+
 
 
 
