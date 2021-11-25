@@ -5,7 +5,8 @@
 # matplotlib.use('Agg')
 
 
-import yfinance as yf
+# import yfinance as yf
+from data import TickerCached as Ticker
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -22,7 +23,7 @@ sns.set_theme(style='darkgrid', font_scale=1.5)
 tickerSymbol = 'MSFT'
 
 # get data on this ticker
-tickerData = yf.Ticker(tickerSymbol)
+tickerData = Ticker(tickerSymbol)
 
 # get the historical prices for this ticker
 tickerDf = tickerData.history(period='1d', start='2021-1-1', end='2021-6-25')
