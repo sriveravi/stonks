@@ -40,11 +40,11 @@ def addFeatures( tickerDf, closingRollAvgInterval_D = 7,
 
     tickerDf['CloseAvgDelayed'] = tickerDf['CloseAvg'].shift(
         periods=delay, fill_value=np.nan)
-    tickerDf['CloseFutureChange'] = tickerDf['CloseAvgDelayed'] - tickerDf['Close']
+    tickerDf['truth_closeChange'] = tickerDf['CloseAvgDelayed'] - tickerDf['Close']
 
     # If the average is up at the delay, then good (else bad)
     tickerDf['Good'] = 0  # preset all bad
-    tickerDf.loc[tickerDf['CloseFutureChange'] > 0, 'Good'] = 1
+    tickerDf.loc[tickerDf['truth_closeChange'] > 0, 'Good'] = 1
 
     # clean for return
     tickerDf.dropna(inplace=True)
@@ -52,13 +52,12 @@ def addFeatures( tickerDf, closingRollAvgInterval_D = 7,
     return tickerDf
 
 
-def getSymbolDF( symbols):
+def getSymbolDF( symbols, **kwargs):
     ticker_df_list = []
     for tickerStr in symbols:
-
         try:
             ticker = Ticker(tickerStr)
-            tDF = ticker.history(period='1d', start='2020-1-1', end='2021-8-25')
+            tDF = ticker.history(**kwargs)
             #         tDF = ticker.history(period='1d', start='2010-1-1', end='2020-1-25')
             tDF = addFeatures(tDF)
             ticker_df_list.append(addFeatures(tDF) )
@@ -129,8 +128,8 @@ if __name__ == '__main__':
     ax.set_xlabel('')
 
     plt.subplot(3, 1, 2)
-    # plt.plot(tickerDf['Date'], tickerDf['CloseFutureChange'], '.')
-    ax = sns.scatterplot(x='Date', y='CloseFutureChange', data=tickerDf)
+    # plt.plot(tickerDf['Date'], tickerDf['truth_closeChange'], '.')
+    ax = sns.scatterplot(x='Date', y='truth_closeChange', data=tickerDf)
     ax.axhline(0, linestyle='-', color='red')
     ax.set_xticklabels([])
     ax.set_xlabel('')
@@ -149,7 +148,7 @@ if __name__ == '__main__':
     # -------------------------
     # show some relationships between variables of interest
     colsOfInterest = ['Volume', 'DailyChange', 'DailyChangeMean',
-                      'DailyChangeStd', 'CloseFutureChange', 'Good']
+                      'DailyChangeStd', 'truth_closeChange', 'Good']
 
     sns.pairplot(tickerDf[colsOfInterest])
 

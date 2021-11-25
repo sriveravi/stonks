@@ -3,25 +3,15 @@
 
 from data import TickerCached as Ticker
 from sklearn.linear_model import LogisticRegression
-# Basic setup
 import numpy as np
 import pandas as pd
-from features import addFeatures, getSymbolDF
-
-
-# %pip list
-#!jupyter nbconvert --to script lr_test.ipynb
-# get_ipython().run_line_magic('matplotlib', 'inline')
-
-
-
+from features import getSymbolDF
 
 # --------   DATA  -----------------
 
 ## Load Nasdaq summary of Symbols
 nasdaq = pd.read_csv('nasdaqlisted.txt', delimiter='|')
 # print(nasdaq.head())
-
 
 # Decide on training and validation sets
 Ntotal = 10
@@ -34,9 +24,12 @@ print( "Train symbols: ", symbols_train, '\n')
 print( "Val symbols: ", symbols_val)
 
 
+timeParams = {'period':'1d', 'start':'2020-1-1', 'end':'2021-8-25'}
+
+
 # ## Download and format historical data
-trainDF = getSymbolDF( symbols_train )
-valDF = getSymbolDF( symbols_val )
+trainDF = getSymbolDF( symbols_train, **timeParams)
+valDF = getSymbolDF( symbols_val, **timeParams )
 
 # trainDF.to_pickle( 'train.pkl')
 # valDF.to_pickle( 'val.pkl')
@@ -50,58 +43,23 @@ valDF = getSymbolDF( symbols_val )
 # clf.predict_proba(X[:2, :])
 # clf.score(X, y)
 
-
 feats = ["DailyChangeMean", "DailyChangeStd" ]
 target = "Good"
 
-
-# In[28]:
-
-
+# fit model
 X = trainDF[feats]
 y = trainDF[target]
-
-
-# In[29]:
-
-
 clf = LogisticRegression(random_state=0).fit(X, y)
-
-
-# In[30]:
-
-
 s = clf.score(X,y)
 print( f"Training set accuracy: {s}")
 
-
-# ## Check generalization
-
-# In[31]:
-
-
+# Check generalization
 X_val = valDF[feats]
 y_val = valDF[target]
-
-
-# In[32]:
-
-
 s = clf.score(X_val,y_val)
 print( f"Validation set accuracy: {s}")
 
-
 # ## Visualize and Exploratory Data Analysis (EDA)
-# 
-
-# In[ ]:
-
-
+print('Class counts:')
 trainDF['Good'].value_counts()
-
-
-# In[ ]:
-
-
-
 
