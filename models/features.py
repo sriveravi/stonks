@@ -107,10 +107,10 @@ if __name__ == '__main__':
     ax.axhline(0, linestyle='-', color='red')
     ax.set_xticklabels([])
     ax.set_xlabel('')
-    ax.set_ylabel(f'[C-O] Mean (Roll {dailyChangeRollAvgInterval_D} D)')
+    # ax.set_ylabel(f'[C-O] Mean (Roll {dailyChangeRollAvgInterval_D} D)')
     plt.subplot(2, 1, 2)
     ax = sns.scatterplot(x='Date', y='DailyChangeStd', data=tickerDf)
-    ax.set_ylabel(f'[C-O] STD (Roll {dailyChangeRollAvgInterval_D} D)')
+    # ax.set_ylabel(f'[C-O] STD (Roll {dailyChangeRollAvgInterval_D} D)')
 
     # show closing average rolling mean
     plt.figure()
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     ax.axhline(0, linestyle='-', color='red')
     ax.set_xticklabels([])
     ax.set_xlabel('')
-    plt.ylabel(f'{-1*delay} day change')
+    # plt.ylabel(f'{-1*delay} day change')
 
     plt.subplot(3, 1, 3)
     # plt.plot(tickerDf['Date'], tickerDf['Good'], '.')
